@@ -1,0 +1,9 @@
+android_app {
+    name: "AIAgentLauncher",
+    vendor_available: true,
+    sdk_version: "current",
+    manifest: "AndroidManifest.xml",
+    srcs: ["src/**/*.java"],
+    resource_dirs: ["res"],
+    static_libs: [],
+}

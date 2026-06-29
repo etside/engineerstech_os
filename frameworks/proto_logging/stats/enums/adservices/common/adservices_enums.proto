@@ -1,0 +1,276 @@
+/*
+ * Copyright (C) 2023 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+syntax = "proto2";
+package android.adservices;
+
+// Recommended setup in go/java-proto-names
+option java_outer_classname = "AdservicesProtoEnums";
+option java_multiple_files = true;
+
+/**
+ * Type of the classifier used for classifying apps.
+ */
+enum ClassifierType {
+  /** Unknown classifier option. */
+  UNKNOWN_CLASSIFIER = 0;
+  /** Only on-device classification. */
+  ON_DEVICE_CLASSIFIER = 1;
+  /** Only Precomputed classification. */
+  PRECOMPUTED_CLASSIFIER = 2;
+  /** Precomputed classification values are preferred over on-device classification values. */
+  PRECOMPUTED_THEN_ON_DEVICE_CLASSIFIER = 3;
+}
+
+/**
+ * On Device classifier status.
+ */
+enum OnDeviceClassifierStatus {
+  ON_DEVICE_CLASSIFIER_STATUS_UNSPECIFIED = 0;
+  ON_DEVICE_CLASSIFIER_STATUS_NOT_INVOKED = 1;
+  ON_DEVICE_CLASSIFIER_STATUS_SUCCESS = 2;
+  ON_DEVICE_CLASSIFIER_STATUS_FAILURE = 3;
+}
+
+/**
+ * Precomputed classifier status.
+ */
+enum PrecomputedClassifierStatus {
+  PRECOMPUTED_CLASSIFIER_STATUS_UNSPECIFIED = 0;
+  PRECOMPUTED_CLASSIFIER_STATUS_NOT_INVOKED = 1;
+  PRECOMPUTED_CLASSIFIER_STATUS_SUCCESS = 2;
+  PRECOMPUTED_CLASSIFIER_STATUS_FAILURE = 3;
+}
+
+/**
+ * Attribution types.
+ */
+enum AttributionType {
+  UNKNOWN = 0;
+  APP_APP = 1;
+  APP_WEB = 2;
+  WEB_APP = 3;
+  WEB_WEB = 4;
+}
+
+/**
+ * Adservices API names.
+ */
+enum PpapiName {
+  PPAPI_NAME_UNSPECIFIED = 0;
+  TOPICS = 1;
+  MEASUREMENT = 2;
+  FLEDGE = 3;
+  AD_ID = 4;
+  APP_SET_ID = 5;
+  UX = 6;
+  // Use COMMON enum when the error happens in the common code path.
+  COMMON = 7;
+  // Represents federatedcompute APK in OnDevicePersonalization module.
+  FEDERATED_COMPUTE = 8;
+  // Data service used for migrating consent from Android R
+  ADEXT_DATA_SERVICE = 9;
+  // Represents ondevicepersonalization APK of OnDevicePersonalization module.
+  ODP = 10;
+  // Represents Protected App Signals API.
+  PAS = 11;
+  // Represents GetAdSelectionData API of B&A.
+  GET_AD_SELECTION_DATA = 12;
+  // Represents PersistAdSelectionResult API of B&A.
+  PERSIST_AD_SELECTION_RESULT = 13;
+}
+
+/**
+ * Type of the result code that implies different execution results of Adservices background jobs.
+ */
+enum ExecutionResultCode {
+  /** Unspecified result code. */
+  UNSPECIFIED_CODE = 0;
+
+  /** Successful execution. */
+  SUCCESSFUL = 1;
+
+  /** Failed execution with retrying the job. */
+  FAILED_WITH_RETRY = 2;
+
+  /** Failed execution without retrying the job. */
+  FAILED_WITHOUT_RETRY = 3;
+
+  /** OnJobStop() is invoked with retrying the job. */
+  ONSTOP_CALLED_WITH_RETRY = 4;
+
+  /** OnJobStop() is invoked without retrying the job. */
+  ONSTOP_CALLED_WITHOUT_RETRY = 5;
+
+  /**
+   * The execution is halted by system or device for unknown reason, leaving
+   * a not finished execution.
+   */
+  HALTED_FOR_UNKNOWN_REASON = 6;
+
+  /** Skipped execution due to a job scheduled in ExtServices running on T+. */
+  SKIP_FOR_EXTSERVICES_JOB_ON_TPLUS = 7;
+
+  /** Skipped execution due to kill switch is on. */
+  SKIP_FOR_KILL_SWITCH_ON = 8;
+
+  /** Skipped execution due to user consent is revoked. */
+  SKIP_FOR_USER_CONSENT_REVOKED = 9;
+
+  /** Skipped execution due to job is not configured. */
+  SKIP_FOR_JOB_NOT_CONFIGURED = 10;
+
+  /** Skipped execution due to personalization not enabled. */
+  SKIP_FOR_PERSONALIZATION_NOT_ENABLED = 11;
+}
+
+/** Type of the result code that implies different scheduling results. */
+enum JobSchedulingResultCode {
+  // Default value.
+  SCHEDULING_RESULT_CODE_UNSPECIFIED = 0;
+
+  // Indicates the scheduling is successful.
+  SCHEDULING_RESULT_CODE_SUCCESSFUL = 1;
+
+  // Indicates the scheduling is failed.
+  SCHEDULING_RESULT_CODE_FAILED = 2;
+
+  // Indicates the scheduling is skipped due to same policy.
+  SCHEDULING_RESULT_CODE_SKIPPED = 3;
+}
+
+/** Type of scheduler used for the job scheduling. */
+enum SchedulerType {
+  // Default value.
+  SCHEDULER_TYPE_UNSPECIFIED = 0;
+
+  // Indicates the scheduler is Platform JobScheduler.
+  SCHEDULER_TYPE_JOB_SCHEDULER = 1;
+
+  // Indicates the scheduler is Platform SPE (Scheduling Policy Engine).
+  SCHEDULER_TYPE_SPE = 2;
+}
+
+// Region of the user who interacted with AdServicesSettings UI.
+enum AdServiceSettingRegion {
+  // fallback when getDeviceRegion call failed.
+  REGION_UNSPECIFIED = 0;
+  // European Union user (based on isoCountryInfo).
+  EU = 1;
+  // Non-European Union user (based on isoCountryInfo).
+  ROW = 2;
+}
+
+/* APIs whose access can be overridden by the app developer through the Android manifest. */
+enum AppApiAccessType {
+  API_ACCESS_TYPE_UNSPECIFIED = 0;
+  API_ACCESS_TYPE_TOPICS = 1;
+  API_ACCESS_TYPE_CUSTOM_AUDIENCES = 2;
+  API_ACCESS_TYPE_ATTRIBUTION = 3;
+  API_ACCESS_TYPE_PROTECTED_SIGNALS = 4;
+  API_ACCESS_TYPE_AD_SELECTION = 5;
+}
+
+/* Result of a call to check if an app allows access to a given AdServices API. */
+enum AppApiAccessResult {
+  API_ACCESS_RESULT_UNSPECIFIED = 0;
+  API_ACCESS_RESULT_ALLOWED_BY_DEFAULT_APP_DOES_NOT_HAVE_CONFIG = 1;
+  API_ACCESS_RESULT_ALLOWED_BY_DEFAULT_APP_HAS_CONFIG_WITHOUT_API_SECTION = 2;
+  API_ACCESS_RESULT_ALLOWED_APP_ALLOWS_ALL = 3;
+  API_ACCESS_RESULT_ALLOWED_APP_ALLOWS_SPECIFIC_ID = 4;
+  API_ACCESS_RESULT_DISALLOWED_APP_DOES_NOT_EXIST = 5;
+  API_ACCESS_RESULT_DISALLOWED_APP_CONFIG_PARSING_ERROR = 6;
+  API_ACCESS_RESULT_DISALLOWED_APP_DOES_NOT_HAVE_CONFIG = 7;
+  API_ACCESS_RESULT_DISALLOWED_APP_DOES_HAS_CONFIG_WITHOUT_API_SECTION = 8;
+  API_ACCESS_RESULT_DISALLOWED_BY_APP = 9;
+  API_ACCESS_RESULT_DISALLOWED_GENERIC_ERROR = 10;
+}
+
+// Module for which the job is reported.
+enum ModuleName {
+  UNKNOWN_MODULE_NAME = 0;
+  MODULE_NAME_ADSERVICES = 1;
+  MODULE_NAME_ON_DEVICE_PERSONALIZATION = 2;
+  MODULE_NAME_FEDERATED_COMPUTE = 3;
+}
+
+/**
+ * Enum representing a shell command. We will group enums in blocks of
+ * 100 like this below:
+ * - Common commands: 1-100
+ * - Custom audience commands: 101-200
+ * - Ad Selection commands: 201-300
+ *
+ */
+enum Command {
+  COMMAND_UNSET = 0;
+
+  // Common commands: 1-100
+  COMMAND_ECHO = 1;
+  COMMAND_IS_ALLOWED_ATTRIBUTION_ACCESS = 2;
+  COMMAND_IS_ALLOWED_PROTECTED_SIGNALS_ACCESS = 3;
+  COMMAND_IS_ALLOWED_CUSTOM_AUDIENCE_ACCESS = 4;
+  COMMAND_IS_ALLOWED_AD_SELECTION_ACCESS = 5;
+  COMMAND_IS_ALLOWED_TOPICS_ACCESS = 6;
+  COMMAND_ENABLE_ADSERVICES = 7;
+  COMMAND_RESET_CONSENT_DATA = 8;
+  COMMAND_DEV_SESSION = 9;  // Command to enable or disable adservices developer mode.
+
+  // Custom audience commands: 101-200
+  COMMAND_CUSTOM_AUDIENCE_VIEW = 101;
+  COMMAND_CUSTOM_AUDIENCE_LIST = 102;
+  COMMAND_CUSTOM_AUDIENCE_REFRESH = 103;
+
+  // Ad Selection commands: 201-300
+  COMMAND_AD_SELECTION_CONSENTED_DEBUG_ENABLE = 201;
+  COMMAND_AD_SELECTION_CONSENTED_DEBUG_DISABLE = 202;
+  COMMAND_AD_SELECTION_CONSENTED_DEBUG_VIEW = 203;
+  COMMAND_AD_SELECTION_CONSENTED_DEBUG_HELP = 204;
+  COMMAND_AD_SELECTION_GET_AD_SELECTION_DATA = 205;
+  COMMAND_AD_SELECTION_MOCK_AUCTION = 206;
+  COMMAND_AD_SELECTION_VIEW_AUCTION_RESULT = 207;
+
+  // Protected App Signals commands: 301-400
+  reserved 301;
+  COMMAND_APP_SIGNALS_GENERATE_INPUT_FOR_ENCODING = 302;
+  COMMAND_APP_SIGNALS_TRIGGER_ENCODING = 303;
+}
+
+// Result of the shell command
+enum CommandResult {
+  COMMAND_RESULT_UNKNOWN = 0;
+  COMMAND_RESULT_SUCCESS = 1;
+  COMMAND_RESULT_GENERIC_ERROR = 2;
+  COMMAND_RESULT_INVALID_ARGS = 3;
+  COMMAND_RESULT_TIMEOUT_ERROR = 4;
+  COMMAND_RESULT_INVALID_COMMAND = 5;
+  COMMAND_RESULT_NOT_ENABLED = 6;
+}
+
+// Cobalt logging event
+enum CobaltLoggingEvent {
+  LOGGING_EVENT_UNSPECIFIED = 0;
+  LOGGING_EVENT_OVER_STRING_BUFFER_MAX = 1;
+  LOGGING_EVENT_OVER_EVENT_VECTOR_BUFFER_MAX = 2;
+  LOGGING_EVENT_OVER_MAX_VALUE = 3;
+}
+
+// Cobalt upload event
+enum CobaltPeriodicJobEvent {
+  UPLOAD_EVENT_UNSPECIFIED = 0;
+  UPLOAD_EVENT_SUCCESS = 1;
+  UPLOAD_EVENT_FAILURE = 2;
+}

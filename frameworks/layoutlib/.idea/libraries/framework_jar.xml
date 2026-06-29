@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="framework.jar">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../../out/soong/.intermediates/frameworks/layoutlib/temp_layoutlib/linux_glibc_common" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../base/core/java" />
+      <root url="file://$PROJECT_DIR$/../base/graphics/java" />
+      <root url="file://$PROJECT_DIR$/../../libcore/luni/src/main/java" />
+      <root url="file://$PROJECT_DIR$/../../libcore/dalvik/src/main/java" />
+    </SOURCES>
+    <jarDirectory
+        url="file://$PROJECT_DIR$/../../out/soong/.intermediates/frameworks/layoutlib/temp_layoutlib/linux_glibc_common" recursive="true" />
+  </library>
+</component>

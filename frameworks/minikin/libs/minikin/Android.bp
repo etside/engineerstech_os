@@ -1,0 +1,183 @@
+// Copyright (C) 2013 The Android Open Source Project
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package {
+    default_applicable_licenses: ["Android-Apache-2.0"],
+}
+
+cc_library_headers {
+    name: "libminikin-headers-for-tests",
+    export_include_dirs: ["."],
+    shared_libs: ["libharfbuzz_ng"],
+    export_shared_lib_headers: ["libharfbuzz_ng"],
+}
+
+cc_library_static {
+    name: "libminikin_from_rust_to_cpp",
+    cpp_std: "c++20",
+    host_supported: true,
+    cflags: [
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+    ],
+    srcs: [
+        "ffi/IcuBridge.cpp",
+    ],
+    generated_headers: [
+        "cxx-bridge-header",
+        "libminikin_cxx_bridge_header",
+    ],
+    generated_sources: [
+        "libminikin_cxx_bridge_code",
+    ],
+    lto: {
+        never: true,
+    },
+    target: {
+        android: {
+            shared_libs: [
+                "libicu",
+            ],
+            export_shared_lib_headers: [
+                "libicu",
+            ],
+        },
+        host: {
+            shared_libs: [
+                "libicui18n",
+                "libicuuc",
+            ],
+            export_shared_lib_headers: [
+                "libicui18n",
+                "libicuuc",
+            ],
+        },
+    },
+}
+
+cc_library {
+    name: "libminikin",
+    host_supported: true,
+    srcs: [
+        "BidiUtils.cpp",
+        "CmapCoverage.cpp",
+        "Emoji.cpp",
+        "Font.cpp",
+        "FontCollection.cpp",
+        "FontFamily.cpp",
+        "FontFeatureUtils.cpp",
+        "FontFileParser.cpp",
+        "FontUtils.cpp",
+        "GraphemeBreak.cpp",
+        "GreedyLineBreaker.cpp",
+        "Hyphenator.cpp",
+        "HyphenatorMap.cpp",
+        "Layout.cpp",
+        "LayoutCore.cpp",
+        "LayoutUtils.cpp",
+        "LineBreaker.cpp",
+        "LineBreakerUtil.cpp",
+        "Locale.cpp",
+        "LocaleListCache.cpp",
+        "MeasuredText.cpp",
+        "Measurement.cpp",
+        "MinikinFontFactory.cpp",
+        "MinikinInternal.cpp",
+        "OptimalLineBreaker.cpp",
+        "ScriptUtils.cpp",
+        "SparseBitSet.cpp",
+        "SystemFonts.cpp",
+        "U16StringPiece.cpp",
+        "WordBreaker.cpp",
+    ],
+    defaults: ["libminikin_defaults"],
+    sanitize: {
+        misc_undefined: [
+            "signed-integer-overflow",
+            "unsigned-integer-overflow",
+            "bounds",
+        ],
+    },
+    product_variables: {
+        debuggable: {
+            // Enable assertion on eng and userdebug build.
+            srcs: [
+                "Debug.cpp",
+            ],
+            cppflags: ["-DENABLE_ASSERTION"],
+        },
+    },
+    shared_libs: [
+        "liblog",
+        "libharfbuzz_ng",
+        "libcutils",
+    ],
+    header_libs: [
+        "libbase_headers",
+        "libminikin_headers",
+        "libutils_headers",
+    ],
+    export_header_lib_headers: ["libminikin_headers"],
+
+    target: {
+        android: {
+            shared_libs: [
+                "libicu",
+                "aconfig_text_flags_c_lib",
+                "server_configurable_flags",
+            ],
+            export_shared_lib_headers: [
+                "libicu",
+            ],
+            generated_headers: [
+                "cxx-bridge-header",
+                "libminikin_cxx_bridge_header",
+            ],
+            whole_static_libs: [
+                "libminikin_rust_ffi",
+                "libflags_rust_cpp_bridge",
+            ],
+        },
+        host: {
+            shared_libs: [
+                "libicui18n",
+                "libicuuc",
+            ],
+            export_shared_lib_headers: [
+                "libicui18n",
+                "libicuuc",
+            ],
+            generated_headers: [
+                "cxx-bridge-header",
+                "libminikin_cxx_bridge_header",
+            ],
+        },
+        linux: {
+            whole_static_libs: [
+                "libminikin_rust_ffi",
+            ],
+        },
+        windows: {
+            enabled: true,
+            cppflags: [
+                "-Wno-ignored-attributes",
+                "-Wno-thread-safety",
+            ],
+        },
+    },
+
+    afdo: true,
+
+}

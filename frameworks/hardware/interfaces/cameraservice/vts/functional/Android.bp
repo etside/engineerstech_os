@@ -1,0 +1,138 @@
+//
+// Copyright (C) 2019 The Android Open Source Project
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+package {
+    default_team: "trendy_team_camera_framework",
+    default_applicable_licenses: ["Android-Apache-2.0"],
+}
+
+filegroup {
+    name: "cameraservice_vts_default_map",
+    srcs: ["cameraservice_vts_default.map"],
+}
+
+// VTS tests must link to HAL definition libraries statically.
+// We have a defaults that is separate from VtsHalTargetTestDefaults
+// since most VTS tests aren't vendor: true, so we'd still want to have
+// shared lib deps (libcutils, libutils etc) for them.
+cc_defaults {
+    name: "CameraServiceHalVtsTargetTestDefaults",
+    defaults: [
+        "hidl_defaults",
+    ],
+
+    // Lists all dependencies that can *not* be expected on the device.
+    static_libs: [
+        "VtsHalHidlTestUtils",
+        "libbase",
+        "libhidlbase",
+        "libcutils",
+        "libhidl-gen-utils",
+        "libutils",
+    ],
+
+    header_libs: [
+        "libhidl_gtest_helper",
+    ],
+
+    // Lists all system dependencies that can be expected on the device.
+    shared_libs: [
+        // All the following are dependencies of any HAL definition library.
+        "liblog",
+    ],
+    cflags: [
+        "-O0",
+        "-g",
+    ],
+
+    target: {
+        android: {
+            shared_libs: [
+                "libvndksupport",
+            ],
+        },
+    },
+
+    require_root: true,
+}
+
+cc_test {
+    name: "VtsHalCameraServiceV2_0TargetTest",
+    defaults: ["CameraServiceHalVtsTargetTestDefaults"],
+
+    vendor: true,
+    srcs: ["VtsHalCameraServiceV2_0TargetTest.cpp"],
+    static_libs: [
+        "android.hardware.camera.common@1.0-helper",
+        "android.frameworks.cameraservice.device@2.0",
+        "android.frameworks.cameraservice.device@2.1",
+        "android.frameworks.cameraservice.service@2.0",
+        "android.frameworks.cameraservice.service@2.1",
+        "android.frameworks.cameraservice.service@2.2",
+        "android.frameworks.cameraservice.common@2.0",
+        "libfmq",
+        "libarect",
+        "libcamera_metadata",
+    ],
+
+    // This is a vendor test that needs can be run on older devices
+    // so should be built with a static stl as well, since if its built
+    // with a newer shared libc++, the older device may not have some symbols.
+    // b/333438055 elaborates on what can go wrong when libc++ is partially
+    // exported.
+    version_script: ":cameraservice_vts_default_map",
+    stl: "libc++_static",
+    shared_libs: [
+        "libmediandk",
+        "libnativewindow",
+        "liblog",
+    ],
+
+    test_suites: ["vts"],
+}
+
+cc_test {
+    name: "VtsAidlCameraServiceTargetTest",
+    defaults: [
+        "CameraServiceHalVtsTargetTestDefaults",
+    ],
+
+    vendor: true,
+    srcs: ["VtsAidlCameraServiceTargetTest.cpp"],
+    static_libs: [
+        "android.hardware.common-V2-ndk",
+        "android.hardware.common.fmq-V1-ndk",
+        "android.hardware.camera.common-helper",
+        "android.frameworks.cameraservice.common-V1-ndk",
+        "android.frameworks.cameraservice.device-V2-ndk",
+        "android.frameworks.cameraservice.service-V2-ndk",
+        "libaidlcommonsupport",
+        "libfmq",
+        "libarect",
+        "libcamera_metadata",
+    ],
+    version_script: ":cameraservice_vts_default_map",
+    stl: "libc++_static",
+    shared_libs: [
+        "libbinder_ndk",
+        "libmediandk",
+        "libnativewindow",
+        "liblog",
+    ],
+
+    test_config: "VtsAidlCameraServiceTargetTest.xml",
+    test_suites: ["vts"],
+}
